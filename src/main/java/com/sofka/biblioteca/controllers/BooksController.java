@@ -3,6 +3,7 @@ package com.sofka.biblioteca.controllers;
 import com.sofka.biblioteca.dto.BooksDto;
 import com.sofka.biblioteca.services.BooksService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.SpringServletContainerInitializer;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = "*")
@@ -31,4 +32,20 @@ public class BooksController {
     private BooksDto lendBooks(@PathVariable("id")String id){
         return booksService.lendBook(id);
     }
+
+    @GetMapping("/tipo/{tipo}")
+    private BooksDto getByTipo(@PathVariable("tipo") String tipo){
+        return booksService.findByTipo(tipo);
+    }
+
+    @GetMapping("/area/{area}")
+    private BooksDto getByArea(@PathVariable("area")String area){
+        return booksService.findByArea(area);
+    }
+
+    @GetMapping("/areatipo/{area}/{tipo}")
+    private BooksDto getByAreaAndTipo(@PathVariable("area")String area,@PathVariable("tipo")String tipo){
+        return booksService.findByTipoAndArea(area,tipo);
+    }
+
 }
