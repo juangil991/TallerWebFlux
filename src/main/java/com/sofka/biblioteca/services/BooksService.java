@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.modelmapper.ModelMapper;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class BooksService {
@@ -22,28 +23,41 @@ public class BooksService {
     }
 
     public BooksDto searchBook(String id){
-        return modelMapper.map(booksRepository.findById(id),BooksDto.class);
+        return modelMapper.map(booksRepository.findById(id).get(),BooksDto.class);
     }
 
-    public BooksDto getAllBooks(){
-        return modelMapper.map(booksRepository.findAll(),BooksDto.class);
+    public List<BooksDto> getAllBooks(){
+        return modelMapper.map(booksRepository.findAll(),List.class);
+
     }
+
 
     public BooksDto findByEstado(String estado){
         return modelMapper.map(booksRepository.findByEstado(estado),BooksDto.class);
     }
 
-    public BooksDto lendBook(String id){
-        BooksDto book = searchBook(id);
+    public String lendBook(String id){
+        BooksDto book= searchBook(id);
+        String result=(book.getEstado().equals("Free"))? "Prestado con exito":
+                "El recurso no se encuentra en Libre";
         book.setFecha(LocalDate.now());
         book.setEstado("Lend");
-        return modelMapper.map(createBook(book),BooksDto.class);
+        modelMapper.map(createBook(book),BooksDto.class);
+        return result;
     }
 
-    public BooksDto returnBook(String id){
+    public String returnBook(String id){
         BooksDto book = searchBook(id);
+        String result=(book.getEstado().equals("Lend"))? "Devuelto con exito":
+                "El recurso no se encuentra en prestamo";
         book.setEstado("Free");
-        return modelMapper.map(createBook(book),BooksDto.class);
+        createBook(book);
+        return result;
+    }
+
+    public String statusBook(String id){
+        BooksDto book = searchBook(id);
+        return book.getEstado().equals("Lend")?"Prestado el :"+book.getFecha().toString():"Disponible";
     }
 
     public BooksDto findByArea(String area){
