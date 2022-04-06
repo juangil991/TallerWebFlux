@@ -46,7 +46,7 @@ public class BooksController {
     }
 
     @GetMapping("/tipo/{tipo}")
-    private BooksDto getByTipo(@PathVariable("tipo") String tipo){
+    private List<BooksDto> getByTipo(@PathVariable("tipo") String tipo){
         return booksService.findByTipo(tipo);
     }
     @GetMapping("estado/{id}")
@@ -55,12 +55,12 @@ public class BooksController {
     }
 
     @GetMapping("/area/{area}")
-    private BooksDto getByArea(@PathVariable("area")String area){
+    private List<BooksDto> getByArea(@PathVariable("area")String area){
         return booksService.findByArea(area);
     }
 
     @GetMapping("/areatipo/{area}/{tipo}")
-    private BooksDto getByAreaAndTipo(@PathVariable("area")String area,@PathVariable("tipo")String tipo){
+    private List<BooksDto> getByAreaAndTipo(@PathVariable("area")String area,@PathVariable("tipo")String tipo){
         return booksService.findByTipoAndArea(area,tipo);
     }
 

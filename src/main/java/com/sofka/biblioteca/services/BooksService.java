@@ -60,15 +60,16 @@ public class BooksService {
         return book.getEstado().equals("Lend")?"Prestado el :"+book.getFecha().toString():"Disponible";
     }
 
-    public BooksDto findByArea(String area){
-        return modelMapper.map(booksRepository.findByArea(area),BooksDto.class);
+    public List<BooksDto> findByArea(String area){
+        return modelMapper.map(booksRepository.findByArea(area),List.class);
     }
 
-    public BooksDto findByTipo(String tipo){
-        return modelMapper.map(booksRepository.findByArea(tipo),BooksDto.class);
+    public List<BooksDto> findByTipo(String tipo){
+        return modelMapper.map(booksRepository.findByTipo(tipo),List.class);
     }
 
-    public BooksDto findByTipoAndArea(String tipo, String area){
-        return modelMapper.map(booksRepository.findByTipoAndArea(tipo,area),BooksDto.class);
+    public List<BooksDto> findByTipoAndArea(String area, String tipo){
+
+        return modelMapper.map(booksRepository.findByTipoAndArea(tipo,area),List.class);
     }
 }
