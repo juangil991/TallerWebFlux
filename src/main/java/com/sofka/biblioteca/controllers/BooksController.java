@@ -28,7 +28,7 @@ public class BooksController {
     }
 
     @GetMapping("/name/{estado}")
-    private Mono<BooksDto> getbooksByEstado(@PathVariable("estado") String estado){
+    private Flux<BooksDto> getbooksByEstado(@PathVariable("estado") String estado){
         return booksService.findByEstado(estado);
     }
 

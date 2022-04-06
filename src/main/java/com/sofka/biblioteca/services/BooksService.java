@@ -22,21 +22,24 @@ public class BooksService {
 
     public Mono<BooksDto> createBook(BooksDto book){
         Books newBook = modelMapper.map(book,Books.class);
-        return Mono.just(modelMapper.map(booksRepository.save(newBook),BooksDto.class));
+        return booksRepository.save(newBook).
+                flatMap(p->{return Mono.just(modelMapper.map(p,BooksDto.class));});
     }
 
     public Mono<BooksDto> searchBook(String id){
-        return Mono.just(modelMapper.map(booksRepository.findById(id).get(),BooksDto.class));
+        return booksRepository.findById(id).
+                flatMap(p->{return Mono.just(modelMapper.map(p,BooksDto.class));});
     }
 
     public Flux<BooksDto> getAllBooks(){
-        return Flux.just(modelMapper.map(booksRepository.findAll(),BooksDto.class));
+        return booksRepository.findAll().flatMap(p->{return Flux.just(modelMapper.map(p,BooksDto.class));});
 
     }
 
 
-    public Mono<BooksDto> findByEstado(String estado){
-        return Mono.just(modelMapper.map(booksRepository.findByEstado(estado),BooksDto.class));
+    public Flux<BooksDto> findByEstado(String estado){
+        return booksRepository.findByEstado(estado)
+                .flatMap(p->{return Mono.just(modelMapper.map(p,BooksDto.class));});
     }
 
     public String lendBook(String id){
@@ -64,15 +67,18 @@ public class BooksService {
     }
 
     public Flux<BooksDto> findByArea(String area){
-        return Flux.just(modelMapper.map(booksRepository.findByArea(area),BooksDto.class));
+        return booksRepository.findByArea(area)
+                .flatMap(p->{return Flux.just(modelMapper.map(p,BooksDto.class));});
     }
 
     public Flux<BooksDto> findByTipo(String tipo){
-        return Flux.just(modelMapper.map(booksRepository.findByTipo(tipo),BooksDto.class));
+        return booksRepository.findByTipo(tipo)
+                .flatMap(p->{return Flux.just(modelMapper.map(p,BooksDto.class));});
     }
 
     public Flux<BooksDto> findByTipoAndArea(String area, String tipo){
 
-        return Flux.just(modelMapper.map(booksRepository.findByTipoAndArea(tipo,area),BooksDto.class));
+        return booksRepository.findByTipoAndArea(tipo,area)
+                .flatMap(p->{return Flux.just(modelMapper.map(p,BooksDto.class));});
     }
 }
