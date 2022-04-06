@@ -6,7 +6,10 @@ import com.sofka.biblioteca.repository.BooksRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.modelmapper.ModelMapper;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
+import java.awt.print.Book;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -17,59 +20,59 @@ public class BooksService {
 
     private ModelMapper modelMapper= new ModelMapper();
 
-    public BooksDto createBook(BooksDto book){
+    public Mono<BooksDto> createBook(BooksDto book){
         Books newBook = modelMapper.map(book,Books.class);
-        return modelMapper.map(booksRepository.save(newBook),BooksDto.class);
+        return Mono.just(modelMapper.map(booksRepository.save(newBook),BooksDto.class));
     }
 
-    public BooksDto searchBook(String id){
-        return modelMapper.map(booksRepository.findById(id).get(),BooksDto.class);
+    public Mono<BooksDto> searchBook(String id){
+        return Mono.just(modelMapper.map(booksRepository.findById(id).get(),BooksDto.class));
     }
 
-    public List<BooksDto> getAllBooks(){
-        return modelMapper.map(booksRepository.findAll(),List.class);
+    public Flux<BooksDto> getAllBooks(){
+        return Flux.just(modelMapper.map(booksRepository.findAll(),BooksDto.class));
 
     }
 
 
-    public BooksDto findByEstado(String estado){
-        return modelMapper.map(booksRepository.findByEstado(estado),BooksDto.class);
+    public Mono<BooksDto> findByEstado(String estado){
+        return Mono.just(modelMapper.map(booksRepository.findByEstado(estado),BooksDto.class));
     }
 
     public String lendBook(String id){
-        BooksDto book= searchBook(id);
-        String result=(book.getEstado().equals("Free"))? "Prestado con exito":
+        Mono<BooksDto> book= searchBook(id);
+        String result=(book.block().getEstado().equals("Free"))? "Prestado con exito":
                 "El recurso no se encuentra en Libre";
-        book.setFecha(LocalDate.now());
-        book.setEstado("Lend");
-        modelMapper.map(createBook(book),BooksDto.class);
+        book.block().setFecha(LocalDate.now());
+        book.block().setEstado("Lend");
+        modelMapper.map(createBook(book.block()),BooksDto.class);
         return result;
     }
 
     public String returnBook(String id){
-        BooksDto book = searchBook(id);
-        String result=(book.getEstado().equals("Lend"))? "Devuelto con exito":
+        Mono<BooksDto> book = searchBook(id);
+        String result=(book.block().getEstado().equals("Lend"))? "Devuelto con exito":
                 "El recurso no se encuentra en prestamo";
-        book.setEstado("Free");
-        createBook(book);
+        book.block().setEstado("Free");
+        createBook(book.block());
         return result;
     }
 
     public String statusBook(String id){
-        BooksDto book = searchBook(id);
-        return book.getEstado().equals("Lend")?"Prestado el :"+book.getFecha().toString():"Disponible";
+        Mono<BooksDto> book = searchBook(id);
+        return book.block().getEstado().equals("Lend")?"Prestado el :"+book.block().getFecha().toString():"Disponible";
     }
 
-    public List<BooksDto> findByArea(String area){
-        return modelMapper.map(booksRepository.findByArea(area),List.class);
+    public Flux<BooksDto> findByArea(String area){
+        return Flux.just(modelMapper.map(booksRepository.findByArea(area),BooksDto.class));
     }
 
-    public List<BooksDto> findByTipo(String tipo){
-        return modelMapper.map(booksRepository.findByTipo(tipo),List.class);
+    public Flux<BooksDto> findByTipo(String tipo){
+        return Flux.just(modelMapper.map(booksRepository.findByTipo(tipo),BooksDto.class));
     }
 
-    public List<BooksDto> findByTipoAndArea(String area, String tipo){
+    public Flux<BooksDto> findByTipoAndArea(String area, String tipo){
 
-        return modelMapper.map(booksRepository.findByTipoAndArea(tipo,area),List.class);
+        return Flux.just(modelMapper.map(booksRepository.findByTipoAndArea(tipo,area),BooksDto.class));
     }
 }
